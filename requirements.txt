@@ -15,7 +15,9 @@ lightgbm>=4.0.0
 # Deep Learning Frameworks
 tensorflow>=2.13.0
 keras>=2.13.0
-# PyTorch (choose based on your system)
+# PyTorch (visit https://pytorch.org/get-started/locally/ for system-specific installation)
+# Example for CPU-only: pip install torch torchvision
+# Example for CUDA 11.8: pip install torch torchvision --index-url https://download.pytorch.org/whl/cu118
 # torch>=2.0.0
 # torchvision>=0.15.0
 
