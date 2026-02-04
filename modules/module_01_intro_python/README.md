@@ -32,7 +32,7 @@ By the end of this module, you will:
 **Key Concept - SIMD (Single Instruction, Multiple Data)**:
 Research how your CPU/GPU uses SIMD to process blocks of numbers simultaneously. This is why NumPy can perform operations on entire arrays in one instruction, while Python loops must process elements one at a time.
 
-**Assignment**: Write a 1-2 page explanation in `research/week1_memory_bottleneck.md` covering:
+**Assignment**: Write a 1-2 page explanation in `research/module_01/week1_memory_bottleneck.md` covering:
 1. The difference between contiguous and non-contiguous memory
 2. How SIMD enables parallel processing
 3. Why this matters for machine learning performance
@@ -124,6 +124,7 @@ print(f"Speedup: {loop_time/numpy_time:.1f}x")
 
 2. **[3Blue1Brown] Linear Algebra - Vectors**
    - Link: https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab
+   - (If link unavailable, search "3Blue1Brown Essence of Linear Algebra" on YouTube)
    - A masterpiece in visualizing what a vector actually represents in space
    - Watch at least Chapters 1-3 (Vectors, Linear combinations, Matrix multiplication)
 
