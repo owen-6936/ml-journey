@@ -28,8 +28,10 @@ Your capstone project should demonstrate:
 3. **Exploratory Analysis**: Comprehensive EDA
 4. **Model Development**: Multiple approaches tried
 5. **Evaluation**: Thorough performance analysis
-6. **Deployment**: Working application/API
+6. **Deployment**: Working application/API **with frontend** 🆕
 7. **Documentation**: Professional-level documentation
+
+**🌟 Full Stack Emphasis**: As a Full Stack Developer, your capstone MUST include both backend API and frontend interface. This is your superpower - most ML engineers can't build complete applications!
 
 ### Project Ideas
 
@@ -150,40 +152,206 @@ Your capstone project should demonstrate:
 
 ### Deployment Options
 
+**🎯 Full Stack ML Application Architecture**
+
+For Full Stack Developers: Your ML project should be a complete application with:
+- **Backend**: FastAPI/Flask ML API
+- **Frontend**: React/Next.js interface
+- **Database**: PostgreSQL/MongoDB for data storage
+- **Deployment**: Docker + Cloud (AWS/GCP/Vercel)
+
 ```python
-# File: deployment/flask_api.py
-from flask import Flask, request, jsonify
+# File: deployment/fastapi_backend.py
+from fastapi import FastAPI, UploadFile, File
+from fastapi.middleware.cors import CORSMiddleware
 import tensorflow as tf
 import numpy as np
+from pydantic import BaseModel
 
-app = Flask(__name__)
+app = FastAPI(title="ML Model API")
+
+# Enable CORS for React frontend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "https://your-frontend.com"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Load your trained model
 model = tf.keras.models.load_model('model.h5')
 
-@app.route('/predict', methods=['POST'])
-def predict():
-    data = request.json
-    # Preprocess input
-    input_data = preprocess(data)
-    # Make prediction
+class PredictionRequest(BaseModel):
+    features: list[float]
+
+class PredictionResponse(BaseModel):
+    prediction: float
+    confidence: float
+
+@app.post("/api/predict", response_model=PredictionResponse)
+async def predict(request: PredictionRequest):
+    """Endpoint for making predictions"""
+    input_data = np.array([request.features])
     prediction = model.predict(input_data)
-    return jsonify({'prediction': prediction.tolist()})
+    
+    return PredictionResponse(
+        prediction=float(prediction[0][0]),
+        confidence=float(np.max(prediction))
+    )
+
+@app.post("/api/predict-image")
+async def predict_image(file: UploadFile = File(...)):
+    """Endpoint for image predictions"""
+    contents = await file.read()
+    # Process image...
+    prediction = model.predict(processed_image)
+    return {"prediction": prediction.tolist()}
+
+@app.get("/api/health")
+async def health_check():
+    return {"status": "healthy", "model_loaded": model is not None}
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
 ```
 
-```python
-# File: deployment/streamlit_app.py
-import streamlit as st
-import tensorflow as tf
+```typescript
+// File: frontend/src/services/mlApi.ts
+// React/Next.js Frontend Integration
 
-st.title('ML Model Demo')
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
-uploaded_file = st.file_uploader("Choose a file")
-if uploaded_file is not None:
-    # Process and predict
-    result = model.predict(uploaded_file)
-    st.write(f'Prediction: {result}')
+interface PredictionRequest {
+  features: number[];
+}
+
+interface PredictionResponse {
+  prediction: number;
+  confidence: number;
+}
+
+export async function getPrediction(features: number[]): Promise<PredictionResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/predict`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ features }),
+  });
+  
+  if (!response.ok) {
+    throw new Error('Prediction failed');
+  }
+  
+  return response.json();
+}
+
+export async function predictImage(file: File): Promise<any> {
+  const formData = new FormData();
+  formData.append('file', file);
+  
+  const response = await fetch(`${API_BASE_URL}/api/predict-image`, {
+    method: 'POST',
+    body: formData,
+  });
+  
+  return response.json();
+}
+```
+
+```tsx
+// File: frontend/src/components/MLPredictor.tsx
+// Example React Component
+
+import { useState } from 'react';
+import { getPrediction } from '@/services/mlApi';
+
+export default function MLPredictor() {
+  const [features, setFeatures] = useState<number[]>([]);
+  const [result, setResult] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+
+  const handlePredict = async () => {
+    setLoading(true);
+    try {
+      const prediction = await getPrediction(features);
+      setResult(prediction);
+    } catch (error) {
+      console.error('Prediction error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="p-6 max-w-md mx-auto">
+      <h2 className="text-2xl font-bold mb-4">ML Model Prediction</h2>
+      
+      {/* Your input form here */}
+      
+      <button 
+        onClick={handlePredict}
+        disabled={loading}
+        className="bg-blue-500 text-white px-4 py-2 rounded"
+      >
+        {loading ? 'Predicting...' : 'Get Prediction'}
+      </button>
+      
+      {result && (
+        <div className="mt-4 p-4 bg-gray-100 rounded">
+          <p>Prediction: {result.prediction}</p>
+          <p>Confidence: {(result.confidence * 100).toFixed(2)}%</p>
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+```dockerfile
+# File: deployment/Dockerfile
+FROM python:3.9-slim
+
+WORKDIR /app
+
+# Install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application
+COPY . .
+
+# Expose port
+EXPOSE 8000
+
+# Run FastAPI
+CMD ["uvicorn", "fastapi_backend:app", "--host", "0.0.0.0", "--port", "8000"]
+```
+
+```yaml
+# File: deployment/docker-compose.yml
+version: '3.8'
+
+services:
+  backend:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - MODEL_PATH=/app/models/model.h5
+    volumes:
+      - ./models:/app/models
+  
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    depends_on:
+      - backend
 ```
 
 ### MLOps Basics
@@ -325,26 +493,46 @@ if __name__ == '__main__':
 
 ### Portfolio Project Structure
 
+**🚀 Full Stack ML Project Template** (Your Competitive Advantage!)
+
 ```
-project-name/
-├── README.md              # Project overview
-├── notebooks/             # Jupyter notebooks
+ml-fullstack-project/
+├── README.md              # Complete project overview with screenshots
+├── backend/               # FastAPI/Flask ML API
+│   ├── api/
+│   │   ├── routes/
+│   │   ├── models/
+│   │   └── main.py
+│   ├── ml/                # ML model code
+│   │   ├── train.py
+│   │   ├── predict.py
+│   │   └── preprocess.py
+│   ├── tests/
+│   ├── Dockerfile
+│   └── requirements.txt
+├── frontend/              # React/Next.js application
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── services/      # API integration
+│   │   └── hooks/
+│   ├── public/
+│   ├── package.json
+│   └── Dockerfile
+├── notebooks/             # Jupyter notebooks for exploration
 │   ├── 01_eda.ipynb
 │   ├── 02_modeling.ipynb
 │   └── 03_evaluation.ipynb
-├── src/                   # Source code
-│   ├── data/
-│   ├── models/
-│   ├── utils/
-│   └── train.py
-├── tests/                 # Unit tests
-├── deployment/            # Deployment code
-│   ├── app.py
-│   └── Dockerfile
+├── data/                  # Data (gitignored, use DVC)
+├── models/                # Saved models
+├── docker-compose.yml     # Full stack orchestration
+├── .github/
+│   └── workflows/         # CI/CD pipeline
 ├── docs/                  # Documentation
-├── requirements.txt       # Dependencies
 └── LICENSE
 ```
+
+**Why this matters**: Most ML engineers only build models. You're building complete, production-ready applications that users can actually interact with. This is your differentiator!
 
 ### GitHub Best Practices
 1. **Clear README**: Problem, approach, results

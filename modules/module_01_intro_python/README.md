@@ -31,7 +31,13 @@ By the end of this module, you will:
    - Linear algebra operations
    - Random number generation
 
-3. **Pandas Basics**
+3. **NumPy for JS Developers** 🆕
+   - Array methods: `.map()`, `.filter()`, `.reduce()` → NumPy vectorization
+   - Understanding vectorized operations vs loops
+   - Performance comparison: for loops vs NumPy
+   - Common JS patterns translated to NumPy
+
+4. **Pandas Basics**
    - DataFrames and Series
    - Reading/writing data (CSV, Excel, JSON)
    - Basic data exploration
@@ -39,8 +45,9 @@ By the end of this module, you will:
 ### Exercises
 - [ ] Exercise 1.1: Set up Python environment
 - [ ] Exercise 1.2: NumPy array operations
-- [ ] Exercise 1.3: Create and manipulate Pandas DataFrames
-- [ ] Exercise 1.4: Load and explore a dataset
+- [ ] Exercise 1.3: NumPy for JS Developers - Translate JS patterns to NumPy
+- [ ] Exercise 1.4: Create and manipulate Pandas DataFrames
+- [ ] Exercise 1.5: Load and explore a dataset
 
 ### Resources
 - [NumPy Documentation](https://numpy.org/doc/)
@@ -54,10 +61,49 @@ By the end of this module, you will:
 # Create exercises/week1_numpy_basics.py
 # Topics: array creation, indexing, slicing, operations
 
-# Exercise 2: Pandas DataFrames
+# Exercise 2: NumPy for JS Developers
+# Create exercises/week1_numpy_for_js_devs.py
+# Topics: vectorization, translating .map/.filter/.reduce to NumPy
+
+# Exercise 3: Pandas DataFrames
 # Create exercises/week1_pandas_basics.py
 # Topics: data loading, filtering, grouping, aggregation
 ```
+
+### Special Section: NumPy for JavaScript Developers 💻
+
+If you're coming from JavaScript/TypeScript, this section will help you leverage your array manipulation skills:
+
+**JS `.map()` → NumPy vectorization**
+```python
+# JavaScript
+const doubled = arr.map(x => x * 2);
+
+# Python/NumPy - NO loops needed!
+doubled = arr * 2
+```
+
+**JS `.filter()` → NumPy boolean indexing**
+```python
+# JavaScript
+const filtered = arr.filter(x => x > 5);
+
+# Python/NumPy
+filtered = arr[arr > 5]
+```
+
+**JS `.reduce()` → NumPy aggregations**
+```python
+# JavaScript
+const sum = arr.reduce((acc, x) => acc + x, 0);
+
+# Python/NumPy
+sum = arr.sum()
+```
+
+**Why this matters**: NumPy operations are 10-100x faster because they avoid Python loops and use optimized C code under the hood. As a JS dev who thinks algorithmically, you'll appreciate the elegance and performance!
+
+**Exercise**: Create `exercises/week1_numpy_for_js_devs.py` to practice these translations.
 
 ## 📚 Week 2: Data Manipulation & Visualization
 
@@ -83,11 +129,18 @@ By the end of this module, you will:
    - Types of ML: Supervised, Unsupervised, Reinforcement
    - ML workflow overview
 
+5. **Your First ML Algorithm: Linear Regression from Scratch** 🆕
+   - Understanding the concept: fitting a line to data
+   - Implementing gradient descent with vanilla Python (no ML libraries!)
+   - Seeing how a simple loop can "learn"
+   - Why this matters before diving into math in Module 2
+
 ### Exercises
 - [ ] Exercise 2.1: Clean a messy dataset
 - [ ] Exercise 2.2: Create visualizations with Matplotlib
 - [ ] Exercise 2.3: Statistical plots with Seaborn
-- [ ] Exercise 2.4: Exploratory Data Analysis (EDA) mini-project
+- [ ] Exercise 2.4: Build Linear Regression from scratch (vanilla Python)
+- [ ] Exercise 2.5: Exploratory Data Analysis (EDA) mini-project
 
 ### Resources
 - [Matplotlib Gallery](https://matplotlib.org/stable/gallery/)
@@ -103,6 +156,67 @@ Requirements:
 2. Perform statistical analysis
 3. Create at least 5 different visualizations
 4. Write insights from your analysis
+
+### 🚀 Special Challenge: Build Your First ML Algorithm (No Libraries!)
+
+**Why do this?** As someone who likes building from scratch, seeing how a simple loop can "learn" will make the complex math in Module 2 feel relevant and concrete.
+
+**The Challenge**: Implement Linear Regression using only vanilla Python (no scikit-learn, no ML libraries!)
+
+```python
+# File: exercises/week2_linear_regression_scratch.py
+"""
+Your First ML Algorithm: Linear Regression from Scratch
+
+Goal: Fit a line y = mx + b to data points using gradient descent
+You'll see how a loop can iteratively "learn" the best m and b!
+"""
+
+def linear_regression_scratch(X, y, learning_rate=0.01, iterations=1000):
+    """
+    Implement gradient descent to find m and b
+    
+    For JS devs: This is like using a loop to minimize error!
+    Each iteration adjusts m and b to reduce prediction error.
+    """
+    m = 0  # slope
+    b = 0  # intercept
+    n = len(X)
+    
+    for i in range(iterations):
+        # Make predictions
+        y_pred = [m * x + b for x in X]
+        
+        # Calculate error (Mean Squared Error)
+        error = sum([(pred - actual) ** 2 for pred, actual in zip(y_pred, y)]) / n
+        
+        # Calculate gradients (how much to adjust m and b)
+        dm = sum([2 * x * (pred - actual) for x, pred, actual in zip(X, y_pred, y)]) / n
+        db = sum([2 * (pred - actual) for pred, actual in zip(y_pred, y)]) / n
+        
+        # Update parameters
+        m = m - learning_rate * dm
+        b = b - learning_rate * db
+        
+        if i % 100 == 0:
+            print(f"Iteration {i}: Error = {error:.4f}")
+    
+    return m, b
+
+# Test it!
+X = [1, 2, 3, 4, 5]
+y = [2, 4, 6, 8, 10]  # Perfect line: y = 2x
+m, b = linear_regression_scratch(X, y)
+print(f"Learned: y = {m:.2f}x + {b:.2f}")
+```
+
+**What you'll learn:**
+- How machine learning is just optimization (finding best parameters)
+- Why we need gradient descent (cannot solve directly for complex problems)
+- The intuition behind "training" a model
+- This prepares you perfectly for Module 2's math!
+
+**Bonus**: After implementing this, the calculus and linear algebra in Module 2 will feel like "oh, this is WHY it works!" instead of abstract math.
 
 ## 🔧 Setup Instructions
 

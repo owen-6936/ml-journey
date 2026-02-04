@@ -39,6 +39,7 @@ faiss-cpu>=1.7.4
 flask>=2.3.0
 fastapi>=0.100.0
 uvicorn>=0.23.0
+pydantic>=2.0.0  # For FastAPI data validation
 streamlit>=1.25.0
 gradio>=3.40.0
 
