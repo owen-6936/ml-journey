@@ -1,24 +1,84 @@
-# Module 1: Introduction to ML & Python Fundamentals
+# Module 1: Python & NumPy Fundamentals 🐍
 
 **Duration**: Weeks 1-2  
 **Difficulty**: Beginner
 
 ## 📋 Overview
 
-This module introduces you to the fundamentals of Python programming and essential libraries used in machine learning. You'll set up your development environment and learn the tools needed for data manipulation and analysis.
+This module introduces you to the fundamentals of Python programming and essential libraries used in machine learning. You'll set up your development environment and learn the tools needed for data manipulation and analysis. **Emphasis on understanding the hardware-software bridge** that makes ML performant.
 
 ## 🎯 Learning Objectives
 
 By the end of this module, you will:
+- **Hardware Awareness**: Understand how memory layout (contiguous vs. non-contiguous) affects AI performance
+- **Vectorization Mastery**: Learn to replace slow for loops with high-speed NumPy operations
+- **Research Literacy**: Begin a habit of reading foundational technical notes and viewing expert visualizations
 - Set up a Python ML development environment
 - Master NumPy for numerical computing
 - Use Pandas for data manipulation
 - Create visualizations with Matplotlib and Seaborn
 - Understand basic ML concepts and terminology
 
-## 📚 Week 1: Python Setup & NumPy/Pandas Basics
+## 📚 Week 1: The Hardware-Software Bridge
+
+### 📚 Research Assignment: The Memory Bottleneck
+
+**Goal**: Prove why "Continuous Space" (Contiguous Memory) is the backbone of ML.
+
+**Core Question**: In your `research/` folder, create a document explaining the **"Hotel vs. Scattered Houses" analogy**:
+- **NumPy Arrays (Hotel)**: All data stored in adjacent memory locations - the CPU can fetch entire blocks at once
+- **Python Lists (Scattered Houses)**: Each element might be stored anywhere in memory - the CPU must make individual trips
+
+**Key Concept - SIMD (Single Instruction, Multiple Data)**:
+Research how your CPU/GPU uses SIMD to process blocks of numbers simultaneously. This is why NumPy can perform operations on entire arrays in one instruction, while Python loops must process elements one at a time.
+
+**Assignment**: Write a 1-2 page explanation in `research/week1_memory_bottleneck.md` covering:
+1. The difference between contiguous and non-contiguous memory
+2. How SIMD enables parallel processing
+3. Why this matters for machine learning performance
+4. Include diagrams or ASCII art to illustrate the concepts
+
+### 🧪 Lab 1.1: Hello Vectors
+
+**Goal**: Practical implementation of vector operations with performance benchmarking.
+
+**Tasks**:
+
+1. **Creation**: Build two 1D arrays of size 100,000 using `np.random.randint`
+2. **Benchmark**: Add these arrays using:
+   - Standard Python `for` loop
+   - NumPy's `+` operator
+   - Use the `time` library to record the difference
+3. **The Dot Product**: Compute the dot product and explain its geometric meaning (scaling and direction)
+
+**Expected Code**:
+```python
+import numpy as np
+import time
+
+# Create arrays
+arr1 = np.random.randint(0, 100, size=100000)
+arr2 = np.random.randint(0, 100, size=100000)
+
+# Method 1: Python loop
+start = time.time()
+result_loop = []
+for i in range(len(arr1)):
+    result_loop.append(arr1[i] + arr2[i])
+loop_time = time.time() - start
+
+# Method 2: NumPy vectorization
+start = time.time()
+result_numpy = arr1 + arr2
+numpy_time = time.time() - start
+
+print(f"Loop time: {loop_time:.6f}s")
+print(f"NumPy time: {numpy_time:.6f}s")
+print(f"Speedup: {loop_time/numpy_time:.1f}x")
+```
 
 ### Topics Covered
+
 1. **Python Environment Setup**
    - Installing Python 3.8+
    - Setting up virtual environments
@@ -30,6 +90,7 @@ By the end of this module, you will:
    - Broadcasting
    - Linear algebra operations
    - Random number generation
+   - **Memory layout and performance implications**
 
 3. **NumPy for JS Developers** 🆕
    - Array methods: `.map()`, `.filter()`, `.reduce()` → NumPy vectorization
@@ -44,10 +105,53 @@ By the end of this module, you will:
 
 ### Exercises
 - [ ] Exercise 1.1: Set up Python environment
-- [ ] Exercise 1.2: NumPy array operations
-- [ ] Exercise 1.3: NumPy for JS Developers - Translate JS patterns to NumPy
-- [ ] Exercise 1.4: Create and manipulate Pandas DataFrames
-- [ ] Exercise 1.5: Load and explore a dataset
+- [ ] Exercise 1.2: Research Assignment - Write "Memory Bottleneck" explanation
+- [ ] Exercise 1.3: Lab 1.1 - Hello Vectors with benchmarking
+- [ ] Exercise 1.4: NumPy array operations
+- [ ] Exercise 1.5: NumPy for JS Developers - Translate JS patterns to NumPy
+- [ ] Exercise 1.6: Create and manipulate Pandas DataFrames
+- [ ] Exercise 1.7: Load and explore a dataset
+
+### 🔗 Essential Resources
+
+#### 📺 Watch (Visual Foundations)
+
+**Must-Watch Videos**:
+1. **[Computerphile] Why NumPy is Faster Than Lists**
+   - Link: Search "Computerphile NumPy faster" on YouTube
+   - Essential for understanding the "Valet" (CPU) and how it fetches memory
+   - Explains contiguous memory and cache efficiency
+
+2. **[3Blue1Brown] Linear Algebra - Vectors**
+   - Link: https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab
+   - A masterpiece in visualizing what a vector actually represents in space
+   - Watch at least Chapters 1-3 (Vectors, Linear combinations, Matrix multiplication)
+
+3. **[Two Minute Papers] Why AI Needs GPUs**
+   - Explains parallel processing and why matrix operations are so important
+
+#### 📖 Read (Research & Documentation)
+
+**Foundational Research**:
+1. **"A Few Useful Things to Know About Machine Learning" by Pedro Domingos**
+   - Link: https://homes.cs.washington.edu/~pedrod/papers/cacm12.pdf
+   - **Must-read** for beginners to avoid common pitfalls
+   - Read pages 1-5 focusing on the introduction and overfitting section
+   - Create notes in your `research/` folder
+
+2. **NumPy Internals - Memory Layout**
+   - Link: https://numpy.org/doc/stable/reference/internals.html
+   - Pay close attention to the definition of **Strides**
+   - Understand how NumPy knows where each element is located
+
+3. **Understanding NumPy's ndarray**
+   - Link: https://numpy.org/doc/stable/reference/arrays.ndarray.html
+   - Read the "Internal memory layout" section
+   - Understand the difference between C-contiguous and Fortran-contiguous arrays
+
+**Visual Aids**:
+- **Python Tutor**: http://pythontutor.com/ - Visualize how Python executes code step-by-step
+- **NumPy Illustrated**: https://betterprogramming.pub/numpy-illustrated-the-visual-guide-to-numpy-3b1d4976de1d
 
 ### Resources
 - [NumPy Documentation](https://numpy.org/doc/)

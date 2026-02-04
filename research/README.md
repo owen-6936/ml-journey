@@ -6,6 +6,9 @@ This directory contains research papers, summaries, and implementation notes.
 
 ```
 research/
+├── module_01/                  # Module 1 research assignments
+│   └── week1_memory_bottleneck_template.md
+├── module_02/                  # Module 2 research
 ├── papers/
 │   ├── foundational/
 │   ├── computer_vision/
@@ -17,6 +20,26 @@ research/
 │   └── paper_code/
 └── reading_list.md
 ```
+
+## 📝 Module Research Assignments
+
+As part of this curriculum, you'll complete research assignments that deepen your understanding of core concepts. These are not just reading exercises - you'll write detailed explanations in your own words to solidify learning.
+
+### Module 1: Week 1 - The Memory Bottleneck
+
+**Assignment**: Explain why contiguous memory is critical for ML performance
+- Use the template in `module_01/week1_memory_bottleneck_template.md`
+- Create your completed version as `module_01/week1_memory_bottleneck.md`
+- Include the "Hotel vs Scattered Houses" analogy
+- Research and explain SIMD operations
+- This prepares you for understanding why NumPy is essential
+
+**Resources**:
+1. Pedro Domingos - "A Few Useful Things to Know About Machine Learning"
+2. NumPy Documentation - Internal Memory Layout
+3. Computerphile videos on memory and performance
+
+**Deliverable**: 1-2 page markdown document with diagrams and code examples
 
 ## 🎯 How to Read Research Papers
 
